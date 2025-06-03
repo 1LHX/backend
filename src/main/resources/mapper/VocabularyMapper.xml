@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.VocabularyMapper">
+
+    <select id="getVocabularyById" resultType="com.example.pojo.Vocabulary">
+        SELECT id, word, meaning FROM vocabulary WHERE id = #{id}
+    </select>
+
+    <select id="getAllWords" resultType="com.example.pojo.Vocabulary">
+        SELECT id, word, meaning FROM vocabulary ORDER BY id
+    </select>
+
+    <select id="getWordsByPage" resultType="com.example.pojo.Vocabulary">
+        SELECT id, word, meaning FROM vocabulary ORDER BY id LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="getTotalWordsCount" resultType="long">
+        SELECT COUNT(*) FROM vocabulary
+    </select>
+
+    <select id="getRandomWords" resultType="com.example.pojo.Vocabulary">
+        SELECT id, word, meaning FROM vocabulary ORDER BY RAND() LIMIT #{count}
+    </select>
+
+    <select id="searchVocabularyByKeyword" resultType="com.example.pojo.Vocabulary">
+        SELECT id, word, meaning FROM vocabulary 
+        WHERE word LIKE CONCAT('%', #{keyword}, '%') 
+           OR meaning LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY 
+            CASE 
+                WHEN word LIKE CONCAT(#{keyword}, '%') THEN 1
+                WHEN word LIKE CONCAT('%', #{keyword}, '%') THEN 2
+                WHEN meaning LIKE CONCAT(#{keyword}, '%') THEN 3
+                ELSE 4
+            END,
+            LENGTH(word),
+            word
+    </select>
+
+</mapper>
